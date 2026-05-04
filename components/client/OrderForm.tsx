@@ -76,7 +76,10 @@ export function OrderForm({ products }: OrderFormProps) {
       })
       const subtotal = orderItems.reduce((sum, i) => sum + i.unit_price * i.quantity, 0)
 
-      if (process.env.NEXT_PUBLIC_SUPABASE_URL) {
+      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+      const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+
+      if (supabaseUrl && supabaseKey) {
         const supabase = createClient()
         const { error } = await supabase.from('orders').insert({
           customer_name: data.customer_name,
@@ -90,11 +93,15 @@ export function OrderForm({ products }: OrderFormProps) {
           status:        'pending',
         })
         if (error) throw error
+      } else {
+        console.error('Supabase env vars missing:', { supabaseUrl: !!supabaseUrl, supabaseKey: !!supabaseKey })
+        throw new Error('Supabase not configured')
       }
 
       setStatus('success')
       clearCart()
-    } catch {
+    } catch (err) {
+      console.error('Order submit error:', err)
       setStatus('error')
     }
   }
