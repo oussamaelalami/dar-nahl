@@ -14,13 +14,15 @@ export async function middleware(request: NextRequest) {
       !pathname.includes('/admin/login'),
   )
 
+  // Run intl middleware first so we can layer auth cookies on top of its response
+  const response = intlMiddleware(request)
+
   if (isAdminRoute) {
     const supabaseUrl  = process.env.NEXT_PUBLIC_SUPABASE_URL
     const supabaseKey  = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
     if (supabaseUrl && supabaseKey) {
       const { createServerClient } = await import('@supabase/ssr')
-      const response = NextResponse.next({ request })
 
       const supabase = createServerClient(supabaseUrl, supabaseKey, {
         cookies: {
@@ -45,7 +47,7 @@ export async function middleware(request: NextRequest) {
     }
   }
 
-  return intlMiddleware(request)
+  return response
 }
 
 export const config = {

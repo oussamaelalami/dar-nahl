@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useForm, useFieldArray } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useTranslations, useLocale } from 'next-intl'
@@ -44,7 +44,15 @@ export function OrderForm({ products }: OrderFormProps) {
     defaultValues: { customer_name: '', phone: '', city: '', address: '', notes: '', items: defaultItems },
   })
 
-  const { fields, append, remove } = useFieldArray({ control, name: 'items' })
+  const { fields, append, remove, replace } = useFieldArray({ control, name: 'items' })
+
+  const cartApplied = useRef(false)
+  useEffect(() => {
+    if (!cartApplied.current && cartItems.length > 0) {
+      cartApplied.current = true
+      replace(cartItems.map((ci) => ({ product_id: ci.product.id, quantity: ci.quantity })))
+    }
+  }, [cartItems, replace])
 
   const watchedItems = watch('items')
   const total = watchedItems.reduce((sum, item) => {

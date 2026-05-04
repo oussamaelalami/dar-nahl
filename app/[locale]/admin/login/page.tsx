@@ -18,8 +18,9 @@ export default function AdminLoginPage() {
   const locale = useLocale()
   const router = useRouter()
   const isAr   = locale === 'ar'
-  const [showPwd, setShowPwd]   = useState(false)
-  const [authErr, setAuthErr]   = useState(false)
+  const [showPwd, setShowPwd]     = useState(false)
+  const [authErr, setAuthErr]     = useState(false)
+  const [authErrMsg, setAuthErrMsg] = useState('')
 
   const {
     register,
@@ -29,6 +30,7 @@ export default function AdminLoginPage() {
 
   const onSubmit = async (data: LoginFormValues) => {
     setAuthErr(false)
+    setAuthErrMsg('')
     const supabase = createClient()
     const { error } = await supabase.auth.signInWithPassword({
       email:    data.email,
@@ -36,6 +38,7 @@ export default function AdminLoginPage() {
     })
     if (error) {
       setAuthErr(true)
+      setAuthErrMsg(error.message)
       return
     }
     router.replace('/admin/dashboard')
@@ -107,7 +110,7 @@ export default function AdminLoginPage() {
             {/* Error */}
             {authErr && (
               <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
-                <span className={isAr ? 'font-arabic' : ''}>{t('error')}</span>
+                <span className={isAr ? 'font-arabic' : ''}>{authErrMsg || t('error')}</span>
               </div>
             )}
 

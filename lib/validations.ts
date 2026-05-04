@@ -15,7 +15,7 @@ export const orderSchema = z.object({
   items: z
     .array(
       z.object({
-        product_id: z.string().uuid(),
+        product_id: z.string().min(1),
         quantity: z.number().int().positive().max(100),
       }),
     )
