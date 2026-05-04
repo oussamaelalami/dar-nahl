@@ -11,6 +11,7 @@ import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { useCart } from './CartContext'
+import { createClient } from '@/lib/supabase/client'
 import { orderSchema, type OrderFormValues } from '@/lib/validations'
 import { formatPrice, getProductName, MOROCCAN_CITIES } from '@/lib/utils'
 import type { Product, Locale } from '@/types'
@@ -63,12 +64,34 @@ export function OrderForm({ products }: OrderFormProps) {
   const onSubmit = async (data: OrderFormValues) => {
     setStatus('loading')
     try {
-      const res = await fetch('/api/orders', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
+      const orderItems = data.items.map((item) => {
+        const product = products.find((p) => p.id === item.product_id)
+        return {
+          product_id:      item.product_id,
+          product_name_fr: product?.name_fr ?? '',
+          product_name_ar: product?.name_ar ?? '',
+          quantity:        item.quantity,
+          unit_price:      product?.price ?? 0,
+        }
       })
-      if (!res.ok) throw new Error()
+      const subtotal = orderItems.reduce((sum, i) => sum + i.unit_price * i.quantity, 0)
+
+      if (process.env.NEXT_PUBLIC_SUPABASE_URL) {
+        const supabase = createClient()
+        const { error } = await supabase.from('orders').insert({
+          customer_name: data.customer_name,
+          phone:         data.phone,
+          city:          data.city,
+          address:       data.address ?? null,
+          items:         orderItems,
+          subtotal,
+          total:         subtotal,
+          notes:         data.notes ?? null,
+          status:        'pending',
+        })
+        if (error) throw error
+      }
+
       setStatus('success')
       clearCart()
     } catch {
