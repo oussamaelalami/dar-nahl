@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python3 d:\\\\storev2\\\\.claude\\\\skills\\\\ui-ux-pro-max\\\\scripts\\\\search.py \"moroccan honey ecommerce artisan food luxury\" --design-system -p \"Dar Nahl - Moroccan Honey Store\" -f markdown)",
+      "Bash(python d:\\\\storev2\\\\.claude\\\\skills\\\\ui-ux-pro-max\\\\scripts\\\\search.py \"moroccan honey ecommerce artisan food luxury\" --design-system -p \"Dar Nahl - Moroccan Honey Store\" -f markdown)",
+      "PowerShell(python \"d:\\\\storev2\\\\.claude\\\\skills\\\\ui-ux-pro-max\\\\scripts\\\\search.py\" \"moroccan honey ecommerce artisan food luxury\" --design-system -p \"Dar Nahl Moroccan Honey\" -f markdown 2>&1)"
+    ]
+  }
+}

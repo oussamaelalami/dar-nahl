@@ -1,0 +1,109 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Amatic+SC:wght@400;700&family=Cabin:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Cairo:wght@300;400;500;600;700;800&display=swap');
+
+:root {
+  --font-amatic: 'Amatic SC', cursive;
+  --font-cabin:  'Cabin', sans-serif;
+  --font-cairo:  'Cairo', sans-serif;
+
+  --honey-50:  #FFFDF0;
+  --honey-100: #FEF9DC;
+  --honey-200: #FEF0A3;
+  --honey-400: #FBCF38;
+  --honey-500: #F5BC0F;
+  --honey-600: #D99B08;
+  --honey-700: #B47506;
+  --honey-800: #8F5505;
+  --honey-900: #6B3D04;
+  --honey-950: #3D2002;
+}
+
+/* ─── Base ─── */
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-cabin), sans-serif;
+  background-color: var(--honey-50);
+  color: var(--honey-950);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+[lang='ar'] body,
+.font-arabic {
+  font-family: var(--font-cairo), sans-serif;
+}
+
+/* ─── Selection ─── */
+::selection {
+  background-color: rgba(217, 155, 8, 0.25);
+  color: var(--honey-950);
+}
+
+/* ─── Scrollbar ─── */
+::-webkit-scrollbar        { width: 6px; }
+::-webkit-scrollbar-track  { background: var(--honey-50); }
+::-webkit-scrollbar-thumb  { background: var(--honey-400); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--honey-600); }
+
+/* ─── Custom utilities ─── */
+@layer utilities {
+  .glass {
+    background: linear-gradient(135deg, rgba(255,253,240,0.75) 0%, rgba(254,249,220,0.55) 100%);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(253,230,138,0.4);
+  }
+
+  .glass-dark {
+    background: linear-gradient(135deg, rgba(61,32,2,0.85) 0%, rgba(107,61,4,0.65) 100%);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(217,155,8,0.2);
+  }
+
+  .honey-text {
+    background: linear-gradient(135deg, #D99B08 0%, #F5BC0F 50%, #FBCF38 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .honeycomb-bg {
+    background-color: var(--honey-50);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='49' viewBox='0 0 28 49'%3E%3Cg fill-rule='evenodd'%3E%3Cg id='hexagons' fill='%23D99B08' fill-opacity='0.05' fill-rule='nonzero'%3E%3Cpath d='M13.99 9.25l13 7.5v15l-13 7.5L1 31.75v-15l12.99-7.5zM3 17.9v12.7l10.99 6.34 11-6.35V17.9l-11-6.34L3 17.9zM0 15l12.98-7.5V0h-2v6.35L0 12.69v2.3zm0 18.5L12.98 41v8h-2v-6.85L0 35.81v-2.3zM15 0v7.5L27.99 15H28v-2.31h-.01L17 6.35V0h-2zm0 49v-8l12.99-7.5H28v2.3h-.01L17 42.15V49h-2z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  }
+
+  .animate-entrance {
+    animation: slideUp 0.5s ease-out both;
+  }
+
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+/* ─── Focus ring ─── */
+*:focus-visible {
+  outline: 2px solid var(--honey-600);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* ─── Reduced motion ─── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ─── RTL helpers ─── */
+[dir='rtl'] .rtl-flip {
+  transform: scaleX(-1);
+}

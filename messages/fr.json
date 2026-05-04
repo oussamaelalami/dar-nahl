@@ -1,0 +1,218 @@
+{
+  "meta": {
+    "title": "Dar Nahl – Le Miel Naturel du Maroc",
+    "description": "Miels artisanaux du Maroc, directement des ruches à votre table."
+  },
+  "nav": {
+    "home": "Accueil",
+    "products": "Nos Miels",
+    "order": "Commander",
+    "cart": "Panier",
+    "admin": "Admin"
+  },
+  "hero": {
+    "badge": "100% Naturel · Artisanal",
+    "title": "Le Miel Pur du Maroc",
+    "subtitle": "De nos ruches en montagne directement à votre table. Un goût authentique, une qualité irréprochable.",
+    "cta": "Découvrir nos miels",
+    "ctaOrder": "Commander maintenant",
+    "scroll": "Défiler"
+  },
+  "features": {
+    "title": "Pourquoi choisir Dar Nahl ?",
+    "natural": {
+      "title": "100% Naturel",
+      "desc": "Sans additifs ni conservateurs. Récolté à la main dans les montagnes marocaines."
+    },
+    "delivery": {
+      "title": "Livraison Maroc",
+      "desc": "Livraison dans tout le Maroc. Nous vous contactons par téléphone pour confirmer."
+    },
+    "quality": {
+      "title": "Qualité Premium",
+      "desc": "Sélection rigoureuse des ruches. Analyse et certification de chaque lot."
+    },
+    "heritage": {
+      "title": "Héritage Marocain",
+      "desc": "Apiculteurs de père en fils depuis des générations dans le Haut Atlas."
+    }
+  },
+  "products": {
+    "title": "Nos Miels",
+    "subtitle": "Une sélection de miels artisanaux, récoltés avec soin dans les régions les plus préservées du Maroc.",
+    "all": "Tous",
+    "thyme": "Thym",
+    "sidr": "Sidr",
+    "mountain": "Montagne",
+    "wildflower": "Fleurs sauvages",
+    "argan": "Argan",
+    "euphorbe": "Euphorbe",
+    "perKg": "/ kg",
+    "order": "Commander",
+    "outOfStock": "Rupture de stock",
+    "addedToCart": "Ajouté au panier",
+    "viewAll": "Voir tous nos miels",
+    "noProducts": "Aucun produit disponible pour le moment.",
+    "origin": "Origine",
+    "weight": "Poids",
+    "inStock": "En stock",
+    "stock": "{count} en stock"
+  },
+  "order": {
+    "title": "Passer une commande",
+    "subtitle": "Remplissez ce formulaire. Notre équipe vous contactera par téléphone pour confirmer et organiser la livraison.",
+    "info": "Confirmation par téléphone",
+    "infoDesc": "Après soumission, nous vous appellerons sous 24h pour confirmer votre commande.",
+    "form": {
+      "personalInfo": "Vos coordonnées",
+      "orderDetails": "Détails de la commande",
+      "name": "Nom complet",
+      "namePlaceholder": "Mohammed Alami",
+      "phone": "Numéro de téléphone",
+      "phonePlaceholder": "+212 6XX XXX XXX",
+      "city": "Ville",
+      "cityPlaceholder": "Casablanca",
+      "address": "Adresse (optionnel)",
+      "addressPlaceholder": "123 Rue Hassan II, Quartier...",
+      "notes": "Notes ou demandes spéciales",
+      "notesPlaceholder": "Emballage cadeau, quantité spéciale...",
+      "products": "Produits commandés",
+      "selectProduct": "Choisir un produit",
+      "quantity": "Qté",
+      "addProduct": "Ajouter un produit",
+      "removeProduct": "Supprimer",
+      "subtotal": "Sous-total",
+      "total": "Total estimé",
+      "submit": "Envoyer la commande",
+      "submitting": "Envoi en cours...",
+      "success": "Commande envoyée avec succès ! Nous vous contacterons bientôt.",
+      "error": "Une erreur s'est produite. Veuillez réessayer.",
+      "emptyCart": "Ajoutez au moins un produit."
+    },
+    "validation": {
+      "nameRequired": "Le nom est requis",
+      "nameMin": "Au moins 2 caractères",
+      "phoneRequired": "Le téléphone est requis",
+      "phoneInvalid": "Numéro invalide (ex: +212 6XX XXX XXX)",
+      "cityRequired": "La ville est requise",
+      "productsRequired": "Ajoutez au moins un produit"
+    }
+  },
+  "cart": {
+    "title": "Votre panier",
+    "empty": "Votre panier est vide",
+    "emptyDesc": "Parcourez nos miels et ajoutez vos préférés.",
+    "browse": "Parcourir les miels",
+    "checkout": "Finaliser la commande",
+    "remove": "Supprimer",
+    "total": "Total",
+    "items": "{count} article(s)"
+  },
+  "footer": {
+    "tagline": "Le miel pur du Maroc, de la ruche à votre table.",
+    "links": "Liens rapides",
+    "contact": "Contactez-nous",
+    "phone": "Téléphone",
+    "whatsapp": "WhatsApp",
+    "email": "Email",
+    "social": "Suivez-nous",
+    "rights": "Tous droits réservés.",
+    "madeIn": "Fait avec ❤ au Maroc"
+  },
+  "admin": {
+    "login": {
+      "title": "Connexion",
+      "subtitle": "Espace d'administration Dar Nahl",
+      "email": "Adresse email",
+      "emailPlaceholder": "admin@darnahl.ma",
+      "password": "Mot de passe",
+      "submit": "Se connecter",
+      "submitting": "Connexion...",
+      "error": "Email ou mot de passe incorrect.",
+      "backToSite": "Retour au site"
+    },
+    "nav": {
+      "dashboard": "Tableau de bord",
+      "orders": "Commandes",
+      "products": "Produits",
+      "logout": "Déconnexion",
+      "site": "Voir le site"
+    },
+    "dashboard": {
+      "title": "Tableau de bord",
+      "welcome": "Bienvenue",
+      "totalOrders": "Total commandes",
+      "pendingOrders": "En attente",
+      "totalProducts": "Produits actifs",
+      "revenue": "Revenus estimés",
+      "recentOrders": "Commandes récentes",
+      "viewAll": "Voir toutes",
+      "noOrders": "Aucune commande pour le moment.",
+      "currency": "MAD"
+    },
+    "orders": {
+      "title": "Gestion des commandes",
+      "id": "N°",
+      "customer": "Client",
+      "phone": "Téléphone",
+      "city": "Ville",
+      "items": "Articles",
+      "total": "Total",
+      "status": "Statut",
+      "date": "Date",
+      "actions": "Actions",
+      "noOrders": "Aucune commande.",
+      "filter": "Filtrer par statut",
+      "all": "Toutes",
+      "details": "Détails",
+      "updateStatus": "Changer le statut",
+      "delete": "Supprimer",
+      "confirmDelete": "Confirmer la suppression",
+      "statuses": {
+        "pending":   "En attente",
+        "confirmed": "Confirmée",
+        "shipped":   "Expédiée",
+        "delivered": "Livrée",
+        "cancelled": "Annulée"
+      },
+      "currency": "MAD"
+    },
+    "products": {
+      "title": "Gestion des produits",
+      "add": "Ajouter un produit",
+      "edit": "Modifier",
+      "delete": "Supprimer",
+      "confirmDelete": "Supprimer ce produit ?",
+      "name": "Nom",
+      "price": "Prix (MAD/kg)",
+      "category": "Catégorie",
+      "stock": "Stock",
+      "status": "Statut",
+      "actions": "Actions",
+      "active": "Actif",
+      "inactive": "Inactif",
+      "toggleStatus": "Changer le statut",
+      "noProducts": "Aucun produit.",
+      "form": {
+        "title": "Nouveau produit",
+        "editTitle": "Modifier le produit",
+        "nameFr": "Nom en français",
+        "nameAr": "Nom en arabe",
+        "descFr": "Description (français)",
+        "descAr": "Description (arabe)",
+        "price": "Prix (MAD/kg)",
+        "category": "Catégorie",
+        "weight": "Poids disponible",
+        "origin": "Origine / Région",
+        "stock": "Stock disponible",
+        "imageUrl": "URL de l'image",
+        "active": "Produit actif",
+        "save": "Enregistrer",
+        "saving": "Enregistrement...",
+        "cancel": "Annuler",
+        "success": "Produit enregistré !",
+        "error": "Erreur lors de l'enregistrement."
+      }
+    }
+  }
+}
