@@ -58,6 +58,12 @@ CREATE OR REPLACE TRIGGER orders_updated_at
   BEFORE UPDATE ON public.orders
   FOR EACH ROW EXECUTE FUNCTION update_updated_at();
 
+-- ─── Grants (required in newer Supabase projects) ────────────
+GRANT USAGE ON SCHEMA public TO anon, authenticated;
+GRANT SELECT ON public.products TO anon, authenticated;
+GRANT INSERT ON public.orders   TO anon, authenticated;
+GRANT SELECT, UPDATE, DELETE ON public.orders TO authenticated;
+
 -- ─── Row Level Security ───────────────────────────────────────
 ALTER TABLE public.products ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.orders   ENABLE ROW LEVEL SECURITY;
