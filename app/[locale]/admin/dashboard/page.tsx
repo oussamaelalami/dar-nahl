@@ -3,6 +3,7 @@ import { ShoppingBag, Clock, Package, TrendingUp } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
 import { DEMO_ORDERS, DEMO_PRODUCTS } from '@/lib/demo-data' // only used when Supabase is not configured
 import { OrdersTable } from '@/components/admin/OrdersTable'
+import { BestSellers } from '@/components/admin/BestSellers'
 import { Badge } from '@/components/ui/badge'
 import { formatPrice } from '@/lib/utils'
 import type { Order, Product, Locale } from '@/types'
@@ -122,6 +123,9 @@ export default async function DashboardPage() {
           </div>
         ))}
       </div>
+
+      {/* Best sellers */}
+      <BestSellers />
 
       {/* Recent orders */}
       <div>

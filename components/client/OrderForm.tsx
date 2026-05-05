@@ -26,7 +26,7 @@ const FORM_STORAGE_KEY = 'dar-nahl-order-draft'
 function loadDraft(): Partial<OrderFormValues> | null {
   if (typeof window === 'undefined') return null
   try {
-    const raw = localStorage.getItem(FORM_STORAGE_KEY)
+    const raw = sessionStorage.getItem(FORM_STORAGE_KEY)
     return raw ? JSON.parse(raw) : null
   } catch { return null }
 }
@@ -36,7 +36,7 @@ export function OrderForm({ products }: OrderFormProps) {
   const tVal   = useTranslations('order.validation')
   const tOrder = useTranslations('order')
   const locale = useLocale() as Locale
-  const { items: cartItems, clearCart } = useCart()
+  const { clearCart } = useCart()
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
 
   const {
@@ -53,33 +53,35 @@ export function OrderForm({ products }: OrderFormProps) {
 
   const { fields, append, remove, replace } = useFieldArray({ control, name: 'items' })
 
-  // Restore saved draft (form fields + product selections) on mount
+  // On mount: restore a real draft (has product selections) or seed from cart in localStorage.
+  // Reading localStorage directly avoids waiting for CartContext to hydrate (which runs after this effect).
   const initialized = useRef(false)
   useEffect(() => {
     if (initialized.current) return
     initialized.current = true
+
     const draft = loadDraft()
-    if (draft) {
+    if (draft?.items?.some((i: any) => i.product_id)) {
       if (draft.customer_name) setValue('customer_name', draft.customer_name)
       if (draft.phone)         setValue('phone', draft.phone)
       if (draft.city)          setValue('city', draft.city)
       if (draft.address)       setValue('address', draft.address ?? '')
       if (draft.notes)         setValue('notes', draft.notes ?? '')
-      if (draft.items?.length) replace(draft.items)
-    } else if (cartItems.length > 0) {
-      replace(cartItems.map((ci) => ({ product_id: ci.product.id, quantity: ci.quantity }))      )
+      replace(draft.items)
+      return
     }
+
+    try {
+      const raw = sessionStorage.getItem('dar-nahl-cart')
+      if (raw) {
+        const stored = JSON.parse(raw) as Array<{ product: { id: string }; quantity: number }>
+        if (stored.length > 0) {
+          replace(stored.map((ci) => ({ product_id: ci.product.id, quantity: ci.quantity })))
+        }
+      }
+    } catch {}
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
-
-  // When cart hydrates and no draft exists, populate form from cart
-  const cartApplied = useRef(false)
-  useEffect(() => {
-    if (initialized.current && !cartApplied.current && cartItems.length > 0 && !loadDraft()) {
-      cartApplied.current = true
-      replace(cartItems.map((ci) => ({ product_id: ci.product.id, quantity: ci.quantity })))
-    }
-  }, [cartItems, replace])
 
   const watchedItems = watch('items')
   const watchedAll = watch()
@@ -91,7 +93,7 @@ export function OrderForm({ products }: OrderFormProps) {
   // Auto-save form draft to localStorage so it survives browser close
   useEffect(() => {
     if (status === 'success') return
-    try { localStorage.setItem(FORM_STORAGE_KEY, JSON.stringify(watchedAll)) } catch {}
+    try { sessionStorage.setItem(FORM_STORAGE_KEY, JSON.stringify(watchedAll)) } catch {}
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [JSON.stringify(watchedAll), status])
 
@@ -134,7 +136,7 @@ export function OrderForm({ products }: OrderFormProps) {
 
       setStatus('success')
       clearCart()
-      try { localStorage.removeItem(FORM_STORAGE_KEY) } catch {}
+      try { sessionStorage.removeItem(FORM_STORAGE_KEY) } catch {}
     } catch (err) {
       console.error('Order submit error:', err)
       setStatus('error')

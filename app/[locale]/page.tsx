@@ -34,7 +34,9 @@ export default async function HomePage() {
   const tHero    = await getTranslations('hero')
   const products = await getProducts()
   const isAr     = locale === 'ar'
-  const featured = products.filter((p) => p.active).slice(0, 3)
+  const featured = [...products.filter((p) => p.active)]
+    .sort((a, b) => a.price - b.price)
+    .slice(0, 3)
 
   return (
     <CartProvider>
@@ -66,7 +68,7 @@ export default async function HomePage() {
               <div className="mx-auto mt-4 h-1 w-16 rounded-full bg-honey-gradient" />
             </div>
 
-            <ProductGrid products={featured} showFilter={false} />
+            <ProductGrid products={featured} showFilter={false} showcase />
 
             <div className="mt-12 text-center">
               <Button asChild size="lg" variant="outline">

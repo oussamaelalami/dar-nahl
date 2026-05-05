@@ -15,6 +15,7 @@ import { cn } from '@/lib/utils'
 interface ProductCardProps {
   product: Product
   className?: string
+  showcase?: boolean
 }
 
 const CATEGORY_EMOJI: Record<string, string> = {
@@ -26,7 +27,7 @@ const CATEGORY_EMOJI: Record<string, string> = {
   euphorbe:  '🌵',
 }
 
-export function ProductCard({ product, className }: ProductCardProps) {
+export function ProductCard({ product, className, showcase = false }: ProductCardProps) {
   const t      = useTranslations('products')
   const locale = useLocale() as Locale
   const { addItem } = useCart()
@@ -128,28 +129,30 @@ export function ProductCard({ product, className }: ProductCardProps) {
             <span className="ms-1 text-xs text-honey-700/50">{t('perKg')}</span>
           </div>
 
-          <Button
-            size="sm"
-            variant={added ? 'secondary' : 'default'}
-            disabled={product.stock === 0}
-            onClick={handleAdd}
-            className={cn(
-              'rounded-xl gap-1.5 transition-all duration-200',
-              added && 'bg-green-100 text-green-700 border-green-200',
-            )}
-          >
-            {added ? (
-              <>
-                <Check className="h-3.5 w-3.5" />
-                {t('addedToCart')}
-              </>
-            ) : (
-              <>
-                <ShoppingCart className="h-3.5 w-3.5" />
-                {t('order')}
-              </>
-            )}
-          </Button>
+          {!showcase && (
+            <Button
+              size="sm"
+              variant={added ? 'secondary' : 'default'}
+              disabled={product.stock === 0}
+              onClick={handleAdd}
+              className={cn(
+                'rounded-xl gap-1.5 transition-all duration-200',
+                added && 'bg-green-100 text-green-700 border-green-200',
+              )}
+            >
+              {added ? (
+                <>
+                  <Check className="h-3.5 w-3.5" />
+                  {t('addedToCart')}
+                </>
+              ) : (
+                <>
+                  <ShoppingCart className="h-3.5 w-3.5" />
+                  {t('order')}
+                </>
+              )}
+            </Button>
+          )}
         </div>
       </div>
     </article>

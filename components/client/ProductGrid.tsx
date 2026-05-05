@@ -11,9 +11,10 @@ interface ProductGridProps {
   products: Product[]
   showFilter?: boolean
   maxItems?: number
+  showcase?: boolean
 }
 
-export function ProductGrid({ products, showFilter = true, maxItems }: ProductGridProps) {
+export function ProductGrid({ products, showFilter = true, maxItems, showcase = false }: ProductGridProps) {
   const t      = useTranslations('products')
   const locale = useLocale()
   const isAr   = locale === 'ar'
@@ -70,7 +71,7 @@ export function ProductGrid({ products, showFilter = true, maxItems }: ProductGr
               className="animate-slide-up"
               style={{ animationDelay: `${i * 60}ms` }}
             >
-              <ProductCard product={product} />
+              <ProductCard product={product} showcase={showcase} />
             </div>
           ))}
         </div>

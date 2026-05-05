@@ -77,6 +77,16 @@ export default function AdminProductsPage() {
     }
   }
 
+  const handleStockUpdate = async (productId: string, stock: number) => {
+    setProducts((prev) => prev.map((p) => p.id === productId ? { ...p, stock } : p))
+    const supabase = createClient()
+    const { error: dbErr } = await supabase.from('products').update({ stock, updated_at: new Date().toISOString() }).eq('id', productId)
+    if (dbErr) {
+      console.error('Stock update failed:', dbErr)
+      setError(dbErr.message)
+    }
+  }
+
   const handleDelete = async (productId: string) => {
     if (!confirm(t('confirmDelete'))) return
     const supabase = createClient()
@@ -143,6 +153,7 @@ export default function AdminProductsPage() {
           onEdit={(p) => setEditing(p)}
           onDelete={handleDelete}
           onToggleActive={handleToggleActive}
+          onStockUpdate={handleStockUpdate}
         />
       )}
     </div>

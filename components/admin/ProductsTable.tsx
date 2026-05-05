@@ -1,7 +1,8 @@
 'use client'
 
+import { useState } from 'react'
 import { useTranslations, useLocale } from 'next-intl'
-import { Pencil, Trash2, ToggleLeft, ToggleRight } from 'lucide-react'
+import { Pencil, Trash2, ToggleLeft, ToggleRight, Check, X } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { formatPrice, getProductName } from '@/lib/utils'
 import type { Product, Locale } from '@/types'
@@ -12,13 +13,26 @@ interface ProductsTableProps {
   onEdit?: (product: Product) => void
   onDelete?: (productId: string) => void
   onToggleActive?: (productId: string, active: boolean) => void
+  onStockUpdate?: (productId: string, stock: number) => void
 }
 
-export function ProductsTable({ products, onEdit, onDelete, onToggleActive }: ProductsTableProps) {
+export function ProductsTable({ products, onEdit, onDelete, onToggleActive, onStockUpdate }: ProductsTableProps) {
   const t      = useTranslations('admin.products')
   const tCat   = useTranslations('products')
   const locale = useLocale() as Locale
   const isAr   = locale === 'ar'
+  const [editingStockId, setEditingStockId]       = useState<string | null>(null)
+  const [editingStockValue, setEditingStockValue] = useState(0)
+
+  function startStockEdit(product: Product) {
+    setEditingStockId(product.id)
+    setEditingStockValue(product.stock)
+  }
+
+  function commitStockEdit(productId: string) {
+    onStockUpdate?.(productId, editingStockValue)
+    setEditingStockId(null)
+  }
 
   if (products.length === 0) {
     return (
@@ -62,9 +76,39 @@ export function ProductsTable({ products, onEdit, onDelete, onToggleActive }: Pr
                   </Badge>
                 </td>
                 <td className="px-4 py-3 text-honey-700">
-                  <span className={product.stock === 0 ? 'text-red-500 font-medium' : ''}>
-                    {product.stock}
-                  </span>
+                  {onStockUpdate && editingStockId === product.id ? (
+                    <div className="flex items-center gap-1">
+                      <input
+                        type="number"
+                        min={0}
+                        value={editingStockValue}
+                        onChange={(e) => setEditingStockValue(Math.max(0, parseInt(e.target.value) || 0))}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter')  commitStockEdit(product.id)
+                          if (e.key === 'Escape') setEditingStockId(null)
+                        }}
+                        autoFocus
+                        className="w-16 rounded-lg border border-honey-300 px-2 py-1 text-center text-sm focus:outline-none focus:ring-2 focus:ring-honey-400"
+                      />
+                      <button onClick={() => commitStockEdit(product.id)} className="text-green-600 hover:text-green-700 cursor-pointer">
+                        <Check className="h-4 w-4" />
+                      </button>
+                      <button onClick={() => setEditingStockId(null)} className="text-red-400 hover:text-red-600 cursor-pointer">
+                        <X className="h-4 w-4" />
+                      </button>
+                    </div>
+                  ) : (
+                    <span
+                      onClick={() => onStockUpdate && startStockEdit(product)}
+                      title={onStockUpdate ? (isAr ? 'انقر للتعديل' : 'Cliquer pour modifier') : undefined}
+                      className={cn(
+                        product.stock === 0 ? 'text-red-500 font-medium' : '',
+                        onStockUpdate && 'cursor-pointer rounded px-1 hover:bg-honey-100 transition-colors',
+                      )}
+                    >
+                      {product.stock}
+                    </span>
+                  )}
                 </td>
                 <td className="px-4 py-3">
                   <Badge variant={product.active ? 'success' : 'destructive'}>

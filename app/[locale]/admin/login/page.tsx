@@ -41,8 +41,7 @@ export default function AdminLoginPage() {
       setAuthErrMsg(error.message)
       return
     }
-    router.refresh()
-    router.replace('/admin/dashboard')
+    window.location.href = `/${locale}/admin/dashboard`
   }
 
   return (

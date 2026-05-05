@@ -60,21 +60,24 @@ const CartContext = createContext<CartContextType | null>(null)
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
   const [state, dispatch] = useReducer(cartReducer, { items: [] })
+  const [hydrated, setHydrated] = React.useState(false)
 
+  // Read from sessionStorage once on mount — must finish before we ever write
   useEffect(() => {
     try {
-      const stored = localStorage.getItem('dar-nahl-cart')
-      if (stored) {
-        dispatch({ type: 'HYDRATE', items: JSON.parse(stored) })
-      }
+      const stored = sessionStorage.getItem('dar-nahl-cart')
+      if (stored) dispatch({ type: 'HYDRATE', items: JSON.parse(stored) })
     } catch {}
+    setHydrated(true)
   }, [])
 
+  // Only write AFTER hydration; prevents overwriting sessionStorage with [] on mount
   useEffect(() => {
+    if (!hydrated) return
     try {
-      localStorage.setItem('dar-nahl-cart', JSON.stringify(state.items))
+      sessionStorage.setItem('dar-nahl-cart', JSON.stringify(state.items))
     } catch {}
-  }, [state.items])
+  }, [hydrated, state.items])
 
   const totalItems = state.items.reduce((sum, i) => sum + i.quantity, 0)
   const totalPrice = state.items.reduce((sum, i) => sum + i.product.price * i.quantity, 0)
