@@ -1,7 +1,7 @@
 import { getTranslations, getLocale } from 'next-intl/server'
 import { ShoppingBag, Clock, Package, TrendingUp } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
-import { DEMO_ORDERS, DEMO_PRODUCTS } from '@/lib/demo-data'
+import { DEMO_ORDERS, DEMO_PRODUCTS } from '@/lib/demo-data' // only used when Supabase is not configured
 import { OrdersTable } from '@/components/admin/OrdersTable'
 import { Badge } from '@/components/ui/badge'
 import { formatPrice } from '@/lib/utils'
@@ -19,11 +19,11 @@ async function getDashboardData() {
       supabase.from('products').select('*').eq('active', true),
     ])
     return {
-      orders:   (ordersRes.data ?? DEMO_ORDERS) as Order[],
-      products: (productsRes.data ?? DEMO_PRODUCTS) as Product[],
+      orders:   (ordersRes.data ?? []) as Order[],
+      products: (productsRes.data ?? []) as Product[],
     }
   } catch {
-    return { orders: DEMO_ORDERS, products: DEMO_PRODUCTS }
+    return { orders: [] as Order[], products: [] as Product[] }
   }
 }
 

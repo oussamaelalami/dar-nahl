@@ -36,14 +36,14 @@ export default function OrdersPage() {
   }, [])
 
   const handleStatusChange = async (orderId: string, status: OrderStatus) => {
-    setOrders((prev) =>
-      prev.map((o) => (o.id === orderId ? { ...o, status } : o)),
-    )
+    const prev = orders.find((o) => o.id === orderId)?.status
+    setOrders((prev) => prev.map((o) => (o.id === orderId ? { ...o, status } : o)))
     const supabase = createClient()
-    const { error: dbErr } = await supabase.from('orders').update({ status }).eq('id', orderId)
+    const { error: dbErr } = await supabase.from('orders').update({ status, updated_at: new Date().toISOString() }).eq('id', orderId)
     if (dbErr) {
       console.error('Status update failed:', dbErr)
       setError(dbErr.message)
+      if (prev) setOrders((cur) => cur.map((o) => (o.id === orderId ? { ...o, status: prev } : o)))
     }
   }
 
