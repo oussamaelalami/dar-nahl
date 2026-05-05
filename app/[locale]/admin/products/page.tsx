@@ -3,12 +3,10 @@
 import { useState, useEffect } from 'react'
 import { useTranslations, useLocale } from 'next-intl'
 import { Plus } from 'lucide-react'
-import { Link } from '@/i18n/navigation'
 import { Button } from '@/components/ui/button'
 import { ProductsTable } from '@/components/admin/ProductsTable'
 import { ProductForm } from '@/components/admin/ProductForm'
 import { createClient } from '@/lib/supabase/client'
-import { DEMO_PRODUCTS } from '@/lib/demo-data'
 import type { Product, Locale } from '@/types'
 import type { ProductFormValues } from '@/lib/validations'
 import { cn } from '@/lib/utils'
@@ -17,79 +15,78 @@ export default function AdminProductsPage() {
   const t      = useTranslations('admin.products')
   const locale = useLocale() as Locale
   const isAr   = locale === 'ar'
-  const [products, setProducts] = useState<Product[]>(DEMO_PRODUCTS)
+  const [products, setProducts] = useState<Product[]>([])
   const [loading, setLoading]   = useState(true)
   const [editing, setEditing]   = useState<Product | null>(null)
   const [saving, setSaving]     = useState(false)
+  const [error, setError]       = useState<string | null>(null)
 
   useEffect(() => {
     async function load() {
-      if (!process.env.NEXT_PUBLIC_SUPABASE_URL) { setLoading(false); return }
       try {
         const supabase = createClient()
-        const { data } = await supabase.from('products').select('*').order('created_at', { ascending: false })
-        if (data) setProducts(data as Product[])
-      } catch {}
-      setLoading(false)
+        const { data, error: dbErr } = await supabase.from('products').select('*').order('created_at', { ascending: false })
+        if (dbErr) throw dbErr
+        setProducts((data ?? []) as Product[])
+      } catch (err: any) {
+        console.error('Failed to load products:', err)
+        setError(err?.message ?? 'Erreur de chargement')
+      } finally {
+        setLoading(false)
+      }
     }
     load()
   }, [])
 
   const handleSave = async (data: ProductFormValues) => {
     setSaving(true)
+    setError(null)
     try {
-      if (process.env.NEXT_PUBLIC_SUPABASE_URL) {
-        const supabase = createClient()
-        if (editing) {
-          const { data: updated } = await supabase
-            .from('products')
-            .update({ ...data, updated_at: new Date().toISOString() })
-            .eq('id', editing.id)
-            .select()
-            .single()
-          if (updated) setProducts((prev) => prev.map((p) => p.id === editing.id ? updated : p))
-        } else {
-          const { data: created } = await supabase.from('products').insert(data).select().single()
-          if (created) setProducts((prev) => [created, ...prev])
-        }
+      const supabase = createClient()
+      if (editing?.id) {
+        const { data: updated, error: dbErr } = await supabase
+          .from('products')
+          .update({ ...data, updated_at: new Date().toISOString() })
+          .eq('id', editing.id)
+          .select()
+          .single()
+        if (dbErr) throw dbErr
+        if (updated) setProducts((prev) => prev.map((p) => p.id === editing.id ? updated : p))
       } else {
-        if (editing) {
-          setProducts((prev) =>
-            prev.map((p) => p.id === editing.id ? { ...p, ...data } : p),
-          )
-        } else {
-          const newProduct: Product = {
-            ...data,
-            id: `demo-${Date.now()}`,
-            description_fr: data.description_fr ?? null,
-            description_ar: data.description_ar ?? null,
-            image_url: data.image_url ?? null,
-            weight: data.weight ?? null,
-            origin: data.origin ?? null,
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString(),
-          }
-          setProducts((prev) => [newProduct, ...prev])
-        }
+        const { data: created, error: dbErr } = await supabase.from('products').insert(data).select().single()
+        if (dbErr) throw dbErr
+        if (created) setProducts((prev) => [created, ...prev])
       }
       setEditing(null)
-    } catch {}
-    setSaving(false)
+    } catch (err: any) {
+      console.error('Save failed:', err)
+      setError(err?.message ?? 'Erreur lors de la sauvegarde')
+    } finally {
+      setSaving(false)
+    }
   }
 
   const handleToggleActive = async (productId: string, active: boolean) => {
     setProducts((prev) => prev.map((p) => p.id === productId ? { ...p, active } : p))
-    if (!process.env.NEXT_PUBLIC_SUPABASE_URL) return
     const supabase = createClient()
-    await supabase.from('products').update({ active }).eq('id', productId)
+    const { error: dbErr } = await supabase.from('products').update({ active }).eq('id', productId)
+    if (dbErr) {
+      console.error('Toggle active failed:', dbErr)
+      setProducts((prev) => prev.map((p) => p.id === productId ? { ...p, active: !active } : p))
+      setError(dbErr.message)
+    }
   }
 
   const handleDelete = async (productId: string) => {
     if (!confirm(t('confirmDelete'))) return
-    setProducts((prev) => prev.filter((p) => p.id !== productId))
-    if (!process.env.NEXT_PUBLIC_SUPABASE_URL) return
     const supabase = createClient()
-    await supabase.from('products').delete().eq('id', productId)
+    const { error: dbErr } = await supabase.from('products').delete().eq('id', productId)
+    if (dbErr) {
+      console.error('Delete failed:', dbErr)
+      setError(dbErr.message)
+      return
+    }
+    setProducts((prev) => prev.filter((p) => p.id !== productId))
   }
 
   return (
@@ -109,6 +106,12 @@ export default function AdminProductsPage() {
           <span className={isAr ? 'font-arabic' : ''}>{t('add')}</span>
         </Button>
       </div>
+
+      {error && (
+        <div className="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
+          {error}
+        </div>
+      )}
 
       {/* Edit / Create modal-like panel */}
       {editing !== null && (

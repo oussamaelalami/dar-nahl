@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react'
 import { useTranslations, useLocale } from 'next-intl'
 import { OrdersTable } from '@/components/admin/OrdersTable'
 import { createClient } from '@/lib/supabase/client'
-import { DEMO_ORDERS } from '@/lib/demo-data'
 import type { Order, OrderStatus, Locale } from '@/types'
 import { cn } from '@/lib/utils'
 
@@ -12,24 +11,26 @@ export default function OrdersPage() {
   const t      = useTranslations('admin.orders')
   const locale = useLocale() as Locale
   const isAr   = locale === 'ar'
-  const [orders, setOrders] = useState<Order[]>(DEMO_ORDERS)
+  const [orders, setOrders] = useState<Order[]>([])
   const [loading, setLoading] = useState(true)
+  const [error, setError]     = useState<string | null>(null)
 
   useEffect(() => {
     async function load() {
-      if (!process.env.NEXT_PUBLIC_SUPABASE_URL) {
-        setLoading(false)
-        return
-      }
       try {
         const supabase = createClient()
-        const { data } = await supabase
+        const { data, error: dbErr } = await supabase
           .from('orders')
           .select('*')
           .order('created_at', { ascending: false })
-        if (data) setOrders(data as Order[])
-      } catch {}
-      setLoading(false)
+        if (dbErr) throw dbErr
+        setOrders((data ?? []) as Order[])
+      } catch (err: any) {
+        console.error('Failed to load orders:', err)
+        setError(err?.message ?? 'Erreur de chargement')
+      } finally {
+        setLoading(false)
+      }
     }
     load()
   }, [])
@@ -38,17 +39,24 @@ export default function OrdersPage() {
     setOrders((prev) =>
       prev.map((o) => (o.id === orderId ? { ...o, status } : o)),
     )
-    if (!process.env.NEXT_PUBLIC_SUPABASE_URL) return
     const supabase = createClient()
-    await supabase.from('orders').update({ status }).eq('id', orderId)
+    const { error: dbErr } = await supabase.from('orders').update({ status }).eq('id', orderId)
+    if (dbErr) {
+      console.error('Status update failed:', dbErr)
+      setError(dbErr.message)
+    }
   }
 
   const handleDelete = async (orderId: string) => {
     if (!confirm(t('confirmDelete'))) return
-    setOrders((prev) => prev.filter((o) => o.id !== orderId))
-    if (!process.env.NEXT_PUBLIC_SUPABASE_URL) return
     const supabase = createClient()
-    await supabase.from('orders').delete().eq('id', orderId)
+    const { error: dbErr } = await supabase.from('orders').delete().eq('id', orderId)
+    if (dbErr) {
+      console.error('Delete failed:', dbErr)
+      setError(dbErr.message)
+      return
+    }
+    setOrders((prev) => prev.filter((o) => o.id !== orderId))
   }
 
   return (
@@ -64,6 +72,12 @@ export default function OrdersPage() {
           {orders.length} {isAr ? 'طلب' : 'commandes'}
         </span>
       </div>
+
+      {error && (
+        <div className="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
+          {error}
+        </div>
+      )}
 
       {loading ? (
         <div className="space-y-3">
