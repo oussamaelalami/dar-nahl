@@ -23,8 +23,9 @@ export async function middleware(request: NextRequest) {
 
     if (supabaseUrl && supabaseKey) {
       const { createServerClient } = await import('@supabase/ssr')
+      const cleanUrl = (() => { try { return new URL(supabaseUrl).origin } catch { return supabaseUrl } })()
 
-      const supabase = createServerClient(supabaseUrl, supabaseKey, {
+      const supabase = createServerClient(cleanUrl, supabaseKey, {
         cookies: {
           getAll: () => request.cookies.getAll(),
           setAll: (cookiesToSet: { name: string; value: string; options: CookieOptions }[]) =>
