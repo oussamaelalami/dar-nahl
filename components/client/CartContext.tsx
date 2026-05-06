@@ -13,6 +13,7 @@ type CartAction =
   | { type: 'UPDATE_QUANTITY'; productId: string; quantity: number }
   | { type: 'CLEAR' }
   | { type: 'HYDRATE'; items: CartItem[] }
+  | { type: 'SYNC'; items: CartItem[] }
 
 function cartReducer(state: CartState, action: CartAction): CartState {
   switch (action.type) {
@@ -40,6 +41,7 @@ function cartReducer(state: CartState, action: CartAction): CartState {
     case 'CLEAR':
       return { items: [] }
     case 'HYDRATE':
+    case 'SYNC':
       return { items: action.items }
     default:
       return state
@@ -54,6 +56,7 @@ interface CartContextType {
   removeItem: (productId: string) => void
   updateQuantity: (productId: string, quantity: number) => void
   clearCart: () => void
+  syncCart: (items: CartItem[]) => void
 }
 
 const CartContext = createContext<CartContextType | null>(null)
@@ -93,6 +96,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         updateQuantity: (productId, quantity) =>
           dispatch({ type: 'UPDATE_QUANTITY', productId, quantity }),
         clearCart: () => dispatch({ type: 'CLEAR' }),
+        syncCart: (items) => dispatch({ type: 'SYNC', items }),
       }}
     >
       {children}

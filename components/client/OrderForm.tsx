@@ -36,7 +36,7 @@ export function OrderForm({ products }: OrderFormProps) {
   const tVal   = useTranslations('order.validation')
   const tOrder = useTranslations('order')
   const locale = useLocale() as Locale
-  const { clearCart } = useCart()
+  const { clearCart, syncCart } = useCart()
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
 
   const {
@@ -60,15 +60,14 @@ export function OrderForm({ products }: OrderFormProps) {
     if (initialized.current) return
     initialized.current = true
 
+    // Restore personal info from draft; always use cart for items
     const draft = loadDraft()
-    if (draft?.items?.some((i: any) => i.product_id)) {
+    if (draft) {
       if (draft.customer_name) setValue('customer_name', draft.customer_name)
       if (draft.phone)         setValue('phone', draft.phone)
       if (draft.city)          setValue('city', draft.city)
       if (draft.address)       setValue('address', draft.address ?? '')
       if (draft.notes)         setValue('notes', draft.notes ?? '')
-      replace(draft.items)
-      return
     }
 
     try {
@@ -85,6 +84,22 @@ export function OrderForm({ products }: OrderFormProps) {
 
   const watchedItems = watch('items')
   const watchedAll = watch()
+
+  // Keep cart icon in sync with form item changes
+  useEffect(() => {
+    if (status === 'success') return
+    const validItems = watchedItems
+      .filter((item) => item.product_id)
+      .map((item) => {
+        const product = products.find((p) => p.id === item.product_id)
+        if (!product) return null
+        return { product, quantity: Math.max(1, item.quantity || 1) }
+      })
+      .filter((x): x is { product: Product; quantity: number } => x !== null)
+    syncCart(validItems)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [JSON.stringify(watchedItems), status])
+
   const total = watchedItems.reduce((sum, item) => {
     const p = products.find((pr) => pr.id === item.product_id)
     return sum + (p ? p.price * item.quantity : 0)
